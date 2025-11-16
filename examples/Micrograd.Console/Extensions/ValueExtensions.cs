@@ -1,54 +1,51 @@
 ﻿using Spectre.Console;
 using System.Text;
+namespace Micrograd.Console.Extensions;
 
-namespace Micrograd.Console.Extensions
+/// <summary>
+/// The <see cref="Value"/> extensions.
+/// </summary>
+public static class ValueExtensions
 {
     /// <summary>
-    /// The <see cref="Value"/> extensions.
+    /// Prints tree view of the Value.
     /// </summary>
-    public static class ValueExtensions
+    /// <param name="value">The input node.</param>
+    public static void PrintAsTree(this Value value)
     {
-        /// <summary>
-        /// Prints tree view of the Value.
-        /// </summary>
-        /// <param name="value">The input node.</param>
-        public static void PrintAsTree(this Value value)
+        Tree root = NewMethod();
+
+        // Create root node because tree is not inherited from Node type ^_^
+        TreeNode rootNode = root.AddNode(GetFormattedTreeLabel(value));
+
+        PopulateTree(rootNode, value);
+
+        AnsiConsole.Write(root);
+
+        static void PopulateTree(TreeNode node, Value value)
         {
-            var root = new Tree("Tree View:");
-
-            // Create root node because tree is not inherited from Node type ^_^
-            var rootNode = root.AddNode(GetFormattedTreeLabel(value));
-
-            PopulateTree(rootNode, value);
-
-            AnsiConsole.Write(root);
-
-            static void PopulateTree(TreeNode node, Value value)
+            TreeNode nextNode = string.IsNullOrEmpty(value.Operation) ? node : node.AddNode($"[red]({value.Operation})[/]");
+            foreach (Value child in value.Children)
             {
-                var nextNode = string.IsNullOrEmpty(value.Operation) ? node : node.AddNode($"[red]({value.Operation})[/]");
-                foreach (var child in value.Children)
-                {
-                    var formattedValue = GetFormattedTreeLabel(child);
-                    var childNode = nextNode.AddNode(formattedValue);
-                    PopulateTree(childNode, child);
-                }
+                string formattedValue = GetFormattedTreeLabel(child);
+                TreeNode childNode = nextNode.AddNode(formattedValue);
+                PopulateTree(childNode, child);
             }
         }
+    }
 
-        /// <summary>
-        /// Gets the formatted label containing value, gradient and label.
-        /// </summary>
-        /// <param name="value">The input node.</param>
-        /// <returns>The formatted label.</returns>
-        private static string GetFormattedTreeLabel(Value value)
-        {
-            var sb = new StringBuilder($"{value} || [yellow]grad={value.Gradient:0.#######}[/]");
-            if (value.Label != null)
-            {
-                sb.Append($" || [green]{value.Label}[/]");
-            }
+    private static Tree NewMethod() => new("Tree View:");
 
-            return sb.ToString();
-        }
+    /// <summary>
+    /// Gets the formatted label containing value, gradient and label.
+    /// </summary>
+    /// <param name="value">The input node.</param>
+    /// <returns>The formatted label.</returns>
+    private static string GetFormattedTreeLabel(Value value)
+    {
+        StringBuilder sb = new($"{value} || [yellow]grad={value.Gradient:0.#######}[/]");
+        if (value.Label != null)
+            sb.Append($" || [green]{value.Label}[/]");
+        return sb.ToString();
     }
 }

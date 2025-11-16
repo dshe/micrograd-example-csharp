@@ -1,19 +1,15 @@
-﻿using System;
+﻿namespace Micrograd.Utilities;
 
-namespace Micrograd.Utilities
+internal class Randomizer
 {
-    internal class Randomizer
+    private static readonly Lock syncLock = new();
+    private static readonly Random random = new();
+
+    public static double GetRandomValue()
     {
-        private static readonly Random random = new Random();
-
-        private static readonly object syncLock = new object();
-
-        public static double GetRandomValue()
+        lock (syncLock)
         {
-            lock (syncLock)
-            {
-                return random.NextDouble() * 2 - 1;
-            }
+            return random.NextDouble() * 2 - 1;
         }
     }
 }

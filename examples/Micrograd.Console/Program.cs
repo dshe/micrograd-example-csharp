@@ -1,7 +1,7 @@
 ﻿using Micrograd.Console.Examples;
 using Spectre.Console;
 
-var exampleNumber = AnsiConsole.Prompt(
+int exampleNumber = AnsiConsole.Prompt(
     new SelectionPrompt<int>()
         .Title("Select example:")
         .UseConverter(value =>
@@ -14,7 +14,7 @@ var exampleNumber = AnsiConsole.Prompt(
                 _ => "Unknown"
             };
         })
-        .AddChoices(new[] { 1, 2, 3 }));
+        .AddChoices([1, 2, 3]));
 
 Action runExample = exampleNumber switch
 {

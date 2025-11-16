@@ -1,15 +1,12 @@
-﻿namespace Micrograd.NN
-{
-    public abstract class Module
-    {
-        public abstract Value[] GetParameters();
+﻿namespace Micrograd.NN;
 
-        public void ZeroGrad()
-        {
-            foreach (var p in GetParameters())
-            {
-                p.ZeroGrad();
-            }
-        }
+public abstract class Module
+{
+    public abstract Value[] GetParameters();
+
+    public void ZeroGrad()
+    {
+        foreach (Value p in GetParameters())
+            p.ZeroGrad();
     }
 }
